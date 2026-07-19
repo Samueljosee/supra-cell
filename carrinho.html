@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Carrinho | Supra Cell</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- =========================================
+       HEADER
+       Mesmo estilo da index.html
+  ========================================== -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+
+      <a href="index.html" class="flex items-center gap-2 shrink-0">
+        <span class="bg-slate-900 text-white font-bold text-lg rounded-lg w-9 h-9 flex items-center justify-center">
+          S
+        </span>
+        <span class="font-bold text-xl text-gray-900 hidden sm:inline">Supra Cell</span>
+      </a>
+
+      <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-slate-900 transition">
+        &larr; Continuar comprando
+      </a>
+
+      <a href="carrinho.html" class="relative shrink-0 p-2 rounded-full hover:bg-gray-100 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.994-4.693 2.608-7.163.145-.585-.323-1.087-.926-1.087H5.106M7.5 14.25L5.106 5.272M7.5 14.25L4.5 17.25M7.5 14.25L18.75 14.25M6.75 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM17.25 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+        <span id="cart-count" class="absolute -top-1 -right-1 bg-slate-900 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- =========================================
+       CONTEÚDO DO CARRINHO
+  ========================================== -->
+  <main class="max-w-4xl mx-auto px-4 py-10 sm:py-16">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
+      Meu Carrinho
+    </h1>
+
+    <!-- Mensagem exibida quando o carrinho está vazio -->
+    <div id="cart-empty" class="hidden text-center py-16 bg-white rounded-2xl shadow-sm">
+      <p class="text-gray-500 text-lg mb-4">Seu carrinho está vazio.</p>
+      <a href="index.html" class="inline-block bg-slate-900 hover:bg-slate-800 text-white font-medium px-6 py-2.5 rounded-full transition">
+        Ver produtos
+      </a>
+    </div>
+
+    <!-- Lista de itens do carrinho (preenchida via script.js) -->
+    <div id="cart-items" class="flex flex-col gap-4 mb-8"></div>
+
+    <!-- Resumo com valor total e botão de finalizar -->
+    <div id="cart-resumo" class="hidden bg-white rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex items-center justify-between sm:justify-start sm:gap-3 text-lg">
+        <span class="text-gray-600">Total:</span>
+        <span id="cart-total" class="font-bold text-2xl text-gray-900">R$ 0,00</span>
+      </div>
+      <button
+        id="btn-finalizar-compra"
+        class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold px-8 py-3 rounded-full transition shadow-md"
+      >
+        Finalizar Compra
+      </button>
+    </div>
+  </main>
+
+  <!-- =========================================
+       MODAL DE CHECKOUT
+       Formulário com dados do cliente para o pedido via WhatsApp
+  ========================================== -->
+  <div id="checkout-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
+      <button id="btn-fechar-modal" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition" aria-label="Fechar">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <h2 class="text-xl font-bold text-gray-900 mb-1">Dados para Entrega</h2>
+      <p class="text-sm text-gray-500 mb-6">Confirme seus dados para enviarmos o pedido pelo WhatsApp.</p>
+
+      <form id="form-checkout" class="flex flex-col gap-4">
+        <div>
+          <label for="nome-cliente" class="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
+          <input
+            type="text" id="nome-cliente" name="nome-cliente" required
+            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label for="endereco-cliente" class="block text-sm font-medium text-gray-700 mb-1">Endereço de entrega</label>
+          <input
+            type="text" id="endereco-cliente" name="endereco-cliente" required
+            placeholder="Rua, número, bairro, cidade"
+            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label for="cep-cliente" class="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+          <input
+            type="text" id="cep-cliente" name="cep-cliente" required
+            placeholder="00000-000"
+            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="mt-2 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full transition"
+        >
+          Enviar Pedido pelo WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================
+       FOOTER
+       Mesmo estilo da index.html
+  ========================================== -->
+  <footer class="bg-slate-900 text-slate-300 mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-sm">
+      &copy; 2026 Supra Cell. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
