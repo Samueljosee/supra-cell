@@ -1,8 +1,11 @@
 // Lógica da Supra Cell, compartilhada entre index.html, admin.html e carrinho.html
 const CARRINHO_STORAGE_KEY = "supracell_carrinho";
 
-// TODO: troque pelo número de WhatsApp real da loja (DDI + DDD + número, só dígitos, sem espaços ou símbolos)
-const WHATSAPP_NUMERO = "5500000000000";
+// Valor de fallback, usado só se a tabela "configuracoes" ainda não tiver
+// nada salvo ou a busca falhar. O número real é gerenciado pelo
+// cadastrador.py (campo "WhatsApp de Atendimento") e carregado dinamicamente
+// pela função buscarConfiguracoes() no final deste arquivo.
+let WHATSAPP_NUMERO = "5500000000000";
 
 // ---------- Configuração do Supabase ----------
 // Publishable key: feita para uso no front-end, protegida pelas
@@ -240,6 +243,75 @@ async function buscarProdutos() {
   renderizarProdutos(data);
 }
 
+// ---------- Configurações da loja (WhatsApp, mensagem e redes sociais) ----------
+
+// Mensagem usada no botão flutuante se a loja ainda não tiver configurado
+// uma mensagem própria pelo cadastrador.py.
+let MENSAGEM_WHATSAPP_PADRAO = "Olá! Vim do site da Supra Cell e gostaria de mais informações.";
+
+// Chaves salvas na tabela "configuracoes" pela aba "Configurações" do cadastrador.py
+const CHAVES_CONFIGURACOES = [
+  "whatsapp_atendimento",
+  "mensagem_whatsapp",
+  "link_instagram",
+  "link_facebook",
+  "link_chat",
+];
+
+// IDs dos ícones do rodapé <-> chave correspondente na tabela "configuracoes"
+const MAPA_LINKS_RODAPE = {
+  "link-instagram-footer": "link_instagram",
+  "link-facebook-footer": "link_facebook",
+  "link-chat-footer": "link_chat",
+};
+
+// Busca todas as configurações da loja salvas no Supabase e atualiza o
+// botão flutuante do WhatsApp, o número usado no checkout do carrinho e
+// os links dos ícones de redes sociais do rodapé.
+async function buscarConfiguracoes() {
+  if (!supabaseClient) return;
+
+  const { data, error } = await supabaseClient
+    .from("configuracoes")
+    .select("chave, valor")
+    .in("chave", CHAVES_CONFIGURACOES);
+
+  if (error || !data) {
+    atualizarBotaoWhatsappFlutuante();
+    return;
+  }
+
+  const valores = {};
+  data.forEach((item) => {
+    if (item.valor) valores[item.chave] = item.valor;
+  });
+
+  if (valores.whatsapp_atendimento) WHATSAPP_NUMERO = valores.whatsapp_atendimento;
+  if (valores.mensagem_whatsapp) MENSAGEM_WHATSAPP_PADRAO = valores.mensagem_whatsapp;
+
+  atualizarBotaoWhatsappFlutuante();
+  atualizarLinksRodape(valores);
+}
+
+// Aplica o WHATSAPP_NUMERO e a mensagem atuais no link do botão flutuante
+// (presente só na index.html), no formato https://wa.me/<numero>?text=<mensagem codificada>
+function atualizarBotaoWhatsappFlutuante() {
+  const botao = document.getElementById("botao-whatsapp-flutuante");
+  if (!botao) return;
+
+  botao.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(MENSAGEM_WHATSAPP_PADRAO)}`;
+}
+
+// Aplica os links de Instagram/Facebook/Chat nos ícones do rodapé. Ícones
+// sem link configurado mantêm o href padrão ("#"), sem quebrar a página.
+function atualizarLinksRodape(valores) {
+  Object.entries(MAPA_LINKS_RODAPE).forEach(([idIcone, chave]) => {
+    if (!valores[chave]) return;
+    const icone = document.getElementById(idIcone);
+    if (icone) icone.href = valores[chave];
+  });
+}
+
 // ---------- Painel administrativo (admin.html) ----------
 
 // Envia um novo produto para a tabela "produtos" no Supabase
@@ -418,4 +490,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrinho();
   buscarProdutos();
   carregarProdutosAdmin();
+  buscarConfiguracoes();
 });
