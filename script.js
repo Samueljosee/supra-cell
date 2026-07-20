@@ -243,6 +243,67 @@ async function buscarProdutos() {
   renderizarProdutos(data);
 }
 
+// ---------- Categorias (menu do header + seção "Navegue por Categorias") ----------
+
+// Busca a lista de categorias no Supabase e desenha tanto a barra de
+// navegação do header quanto os cards da index.html. Roda em qualquer
+// página que tenha os containers (index.html e/ou carrinho.html); se a
+// tabela ainda não existir ou a busca falhar, os containers só ficam vazios.
+async function buscarCategorias() {
+  if (!supabaseClient) return;
+
+  const { data, error } = await supabaseClient
+    .from("categorias")
+    .select("nome, emoji")
+    .order("ordem", { ascending: true });
+
+  if (error || !data) return;
+
+  renderizarMenuCategorias(data);
+  renderizarCardsCategorias(data);
+}
+
+function renderizarMenuCategorias(categorias) {
+  const lista = document.getElementById("categorias-nav");
+  if (!lista) return;
+
+  const baseHref = lista.dataset.baseHref || "";
+  lista.innerHTML = "";
+
+  categorias.forEach((categoria) => {
+    const item = document.createElement("li");
+    item.className = "shrink-0";
+    item.innerHTML = `
+      <a
+        href="${baseHref}#produtos"
+        class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"
+      >
+        <span>${categoria.emoji || ""}</span>${categoria.nome}
+      </a>
+    `;
+    lista.appendChild(item);
+  });
+}
+
+function renderizarCardsCategorias(categorias) {
+  const grid = document.getElementById("categorias-grid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
+
+  categorias.forEach((categoria) => {
+    const card = document.createElement("a");
+    card.href = "#produtos";
+    card.className =
+      "group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300";
+    card.innerHTML = `
+      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">${categoria.emoji || "🏷️"}</span>
+      <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">${categoria.nome}</span>
+    `;
+    grid.appendChild(card);
+  });
+}
+
 // ---------- Configurações da loja (WhatsApp, mensagem e redes sociais) ----------
 
 // Mensagem usada no botão flutuante se a loja ainda não tiver configurado
@@ -491,4 +552,5 @@ document.addEventListener("DOMContentLoaded", () => {
   buscarProdutos();
   carregarProdutosAdmin();
   buscarConfiguracoes();
+  buscarCategorias();
 });

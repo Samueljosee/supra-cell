@@ -54,17 +54,15 @@
 
     </div>
 
-    <!-- Barra de categorias: navegação disponível em qualquer página -->
+    <!-- Barra de categorias: navegação disponível em qualquer página.
+         Preenchida dinamicamente pelo script.js a partir da tabela
+         "categorias" no Supabase (gerenciada pelo cadastrador.py). -->
     <nav class="border-t border-gray-100">
-      <ul class="max-w-7xl mx-auto px-4 flex items-center gap-8 overflow-x-auto py-3.5 text-sm font-medium tracking-wide text-gray-600">
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>🛡️</span>Capinhas &amp; Cases</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>📱</span>Películas</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>⚡</span>Carregadores</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>🔌</span>Cabos &amp; Adaptadores</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>🎧</span>Áudio &amp; Som</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>🚗</span>Suportes &amp; Carro</a></li>
-        <li class="shrink-0"><a href="#produtos" class="relative flex items-center gap-1.5 py-1 hover:text-[#0B1A30] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-[#0B1A30] after:transition-all after:duration-300 hover:after:w-full"><span>⌚</span>Smartwatches</a></li>
-      </ul>
+      <ul
+        id="categorias-nav"
+        data-base-href=""
+        class="max-w-7xl mx-auto px-4 flex items-center gap-8 overflow-x-auto py-3.5 text-sm font-medium tracking-wide text-gray-600"
+      ></ul>
     </nav>
   </header>
 
@@ -91,51 +89,15 @@
 
   <!-- =========================================
        NAVEGUE POR CATEGORIAS
-       Atalhos visuais para as principais categorias da loja
+       Cards gerados dinamicamente pelo script.js a partir da tabela
+       "categorias" no Supabase (gerenciada pelo cadastrador.py)
   ========================================== -->
   <section class="max-w-7xl mx-auto px-4 py-14 sm:py-20">
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center sm:text-left">
       Navegue por Categorias
     </h2>
 
-    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6">
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">🛡️</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Capinhas &amp; Cases</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">📱</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Películas</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">⚡</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Carregadores</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">🔌</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Cabos &amp; Adaptadores</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">🎧</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Áudio &amp; Som</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">🚗</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Suportes &amp; Carro</span>
-      </a>
-
-      <a href="#produtos" class="group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300">
-        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">⌚</span>
-        <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">Smartwatches</span>
-      </a>
-
-    </div>
+    <div id="categorias-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6"></div>
   </section>
 
   <!-- =========================================
