@@ -295,7 +295,7 @@ function renderizarCardsCategorias(categorias) {
     const card = document.createElement("a");
     card.href = "#produtos";
     card.className =
-      "group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#0B1A30] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300";
+      "group flex flex-col items-center gap-3 bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-transparent hover:border-[#d9531e] hover:shadow-md hover:-translate-y-[5px] transition-all duration-300";
     card.innerHTML = `
       <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl group-hover:bg-[#0B1A30] transition">${categoria.emoji || "🏷️"}</span>
       <span class="text-xs sm:text-sm font-semibold text-gray-900 text-center leading-tight">${categoria.nome}</span>
