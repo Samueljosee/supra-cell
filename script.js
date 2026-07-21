@@ -188,7 +188,7 @@ function renderizarProdutos(produtos) {
   produtos.forEach((produto) => {
     const card = document.createElement("div");
     card.className =
-      "bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col";
+      "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col";
 
     card.innerHTML = `
       <img src="${produto.imagem_url}" alt="${produto.nome}" class="w-full aspect-square object-cover" />
@@ -196,7 +196,7 @@ function renderizarProdutos(produtos) {
         <h3 class="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2">${produto.nome}</h3>
         <p class="text-slate-900 font-bold text-lg mt-2">${formatarMoeda(Number(produto.preco))}</p>
         <div class="mt-auto pt-3">
-          <button class="btn-add-carrinho w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium py-2 rounded-lg transition">
+          <button class="btn-add-carrinho w-full bg-[#a31a1a] hover:bg-[#7a0c0c] text-white text-sm font-medium py-2 rounded-lg transition-all duration-300">
             Adicionar ao Carrinho
           </button>
         </div>
