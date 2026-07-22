@@ -204,7 +204,9 @@ function renderizarProdutos(produtos) {
     `;
 
     const botao = card.querySelector(".btn-add-carrinho");
-    botao.addEventListener("click", () => {
+    botao.addEventListener("click", (evento) => {
+      evento.stopPropagation(); // não deixa o clique também abrir o modal do card
+
       adicionarAoCarrinho({
         id: String(produto.id),
         nome: produto.nome,
@@ -221,8 +223,70 @@ function renderizarProdutos(produtos) {
       }, 900);
     });
 
+    // Clicar em qualquer outra parte do card abre a galeria de detalhes
+    card.addEventListener("click", () => abrirModalProduto(produto));
+
     grid.appendChild(card);
   });
+}
+
+// ---------- Modal de detalhes do produto (galeria estilo Mercado Livre) ----------
+
+let produtoModalAtual = null;
+
+// Abre o modal, monta a foto principal e a tira de miniaturas. Hoje cada
+// produto só tem uma foto (produto.imagem_url), então a galeria mostra 1
+// miniatura só — mas já está pronta para produto.imagens_urls (array) se
+// o cadastro passar a aceitar várias fotos por produto no futuro.
+function abrirModalProduto(produto) {
+  produtoModalAtual = produto;
+
+  const imagens =
+    Array.isArray(produto.imagens_urls) && produto.imagens_urls.length
+      ? produto.imagens_urls
+      : [produto.imagem_url];
+
+  document.getElementById("modal-imagem-principal").src = imagens[0];
+  document.getElementById("modal-imagem-principal").alt = produto.nome;
+  document.getElementById("modal-produto-nome").textContent = produto.nome;
+  document.getElementById("modal-produto-preco").textContent = formatarMoeda(Number(produto.preco));
+
+  const miniaturas = document.getElementById("modal-miniaturas");
+  miniaturas.innerHTML = "";
+
+  imagens.forEach((url, indice) => {
+    const miniatura = document.createElement("img");
+    miniatura.src = url;
+    miniatura.alt = `${produto.nome} - foto ${indice + 1}`;
+    miniatura.className =
+      "w-16 h-16 rounded-lg border-2 object-cover cursor-pointer shrink-0 transition-all duration-200 " +
+      (indice === 0 ? "border-red-600" : "border-gray-200 hover:border-red-600");
+
+    const selecionar = () => trocarImagemPrincipal(url, miniatura);
+    miniatura.addEventListener("click", selecionar);
+    miniatura.addEventListener("mouseenter", selecionar);
+
+    miniaturas.appendChild(miniatura);
+  });
+
+  document.getElementById("modal-produto").classList.remove("hidden");
+}
+
+// Troca a foto grande e realça a miniatura selecionada com borda vermelha
+function trocarImagemPrincipal(url, miniaturaSelecionada) {
+  document.getElementById("modal-imagem-principal").src = url;
+
+  document.querySelectorAll("#modal-miniaturas img").forEach((img) => {
+    img.classList.remove("border-red-600");
+    img.classList.add("border-gray-200");
+  });
+  miniaturaSelecionada.classList.remove("border-gray-200");
+  miniaturaSelecionada.classList.add("border-red-600");
+}
+
+function fecharModalProduto() {
+  document.getElementById("modal-produto").classList.add("hidden");
+  produtoModalAtual = null;
 }
 
 // Busca os produtos cadastrados no Supabase e manda renderizar na vitrine
@@ -547,6 +611,37 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Roda em toda página que incluir script.js
+  // Modal de detalhes do produto (presente na index.html)
+  document.getElementById("fechar-modal-produto")?.addEventListener("click", fecharModalProduto);
+
+  document.getElementById("modal-produto")?.addEventListener("click", (evento) => {
+    if (evento.target.id === "modal-produto") fecharModalProduto(); // clique fora do card fecha
+  });
+
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape") fecharModalProduto();
+  });
+
+  document.getElementById("modal-botao-adicionar")?.addEventListener("click", () => {
+    if (!produtoModalAtual) return;
+
+    adicionarAoCarrinho({
+      id: String(produtoModalAtual.id),
+      nome: produtoModalAtual.nome,
+      preco: Number(produtoModalAtual.preco),
+      imagem: produtoModalAtual.imagem_url,
+    });
+
+    const botao = document.getElementById("modal-botao-adicionar");
+    const textoOriginal = botao.textContent;
+    botao.textContent = "Adicionado! ✓";
+    botao.disabled = true;
+    setTimeout(() => {
+      botao.textContent = textoOriginal;
+      botao.disabled = false;
+    }, 900);
+  });
+
   atualizarContadorCarrinho();
   renderizarCarrinho();
   buscarProdutos();
