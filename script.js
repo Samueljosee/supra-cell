@@ -1,6 +1,9 @@
 // Lógica da Supra Cell, compartilhada entre index.html, admin.html e carrinho.html
 const CARRINHO_STORAGE_KEY = "supracell_carrinho";
 
+// Armazena todos os produtos pra busca inteligente
+let todosProdutos = [];
+
 // Valor de fallback, usado só se a tabela "configuracoes" ainda não tiver
 // nada salvo ou a busca falhar. O número real é gerenciado pelo
 // cadastrador.py (campo "WhatsApp de Atendimento") e carregado dinamicamente
@@ -305,7 +308,46 @@ async function buscarProdutos() {
     return;
   }
 
-  renderizarProdutos(data);
+  todosProdutos = data || [];
+  renderizarProdutos(todosProdutos);
+}
+
+// Filtra produtos por termo de busca (busca inteligente por nome, categoria, descrição)
+function filtrarProdutosPorBusca(termoBusca) {
+  if (!termoBusca.trim()) {
+    renderizarProdutos(todosProdutos);
+    return;
+  }
+
+  const termo = termoBusca.toLowerCase().trim();
+
+  // Mapa de sinônimos para busca inteligente
+  const sinonimos = {
+    "fone": ["fone", "headset", "áudio", "intra", "fone de ouvido"],
+    "caixa": ["caixa de som", "speaker", "som"],
+    "som": ["caixa de som", "speaker", "som", "áudio"],
+    "relógio": ["smartwatch", "relogio", "watch"],
+    "smart": ["smartwatch", "relogio", "watch"],
+    "carregador": ["carregador", "carregamento", "cabo", "turbo"],
+    "cabo": ["cabo", "carregador", "adaptador"],
+    "película": ["película", "filme", "protetor"],
+    "capinha": ["capinha", "case", "capa"],
+  };
+
+  // Expande o termo com seus sinônimos
+  const termosExpandidos = [termo, ...(sinonimos[termo] || [])];
+
+  const produtosFiltrados = todosProdutos.filter((produto) => {
+    const nome = produto.nome?.toLowerCase() || "";
+    const categoria = produto.categoria?.toLowerCase() || "";
+    const descricao = produto.descricao?.toLowerCase() || "";
+    const textoProcura = `${nome} ${categoria} ${descricao}`;
+
+    // Busca por qualquer termo expandido
+    return termosExpandidos.some(t => textoProcura.includes(t));
+  });
+
+  renderizarProdutos(produtosFiltrados);
 }
 
 // ---------- Categorias (menu do header + seção "Navegue por Categorias") ----------
@@ -530,6 +572,14 @@ function enviarPedidoWhatsApp(numero, mensagem) {
 // ---------- Inicialização ----------
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Barra de busca inteligente (presente na index.html)
+  const barraBusca = document.querySelector('input[placeholder*="Buscar"]');
+  if (barraBusca) {
+    barraBusca.addEventListener("input", (evento) => {
+      filtrarProdutosPorBusca(evento.target.value);
+    });
+  }
+
   // Botões "Adicionar ao Carrinho" (presentes na index.html)
   document.querySelectorAll(".btn-add-carrinho").forEach((btn) => {
     btn.addEventListener("click", () => {
