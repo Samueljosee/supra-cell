@@ -250,6 +250,7 @@ function abrirModalProduto(produto) {
   document.getElementById("modal-imagem-principal").alt = produto.nome;
   document.getElementById("modal-produto-nome").textContent = produto.nome;
   document.getElementById("modal-produto-preco").textContent = formatarMoeda(Number(produto.preco));
+  document.getElementById("modal-produto-descricao").textContent = produto.descricao || "Sem descrição disponível";
 
   const miniaturas = document.getElementById("modal-miniaturas");
   miniaturas.innerHTML = "";
